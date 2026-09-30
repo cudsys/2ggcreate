@@ -1,0 +1,1256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16161d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="2gg Create">
+<title>2ggcreate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono&display=swap">
+<style>
+  :root {
+    --bg: #16161d; --panel: #1f1f29; --panel-2: #272733; --line: #34343f;
+    --text: #e8e6ef; --muted: #9a97a8; --accent: #00ffff; --accent-ink: #00262a;
+    --danger: #ff6b7a; --warn: #ffc857; --ok: #7ee787;
+    --trivial: #6fe3c1; --easy: #7ee787; --normal: #ffd866; --hard: #ff6b7a; --intense: #c79bff; --master: #4fe3f0; --masterplus: #22a3b0;
+    --radius: 10px;
+    --sans: "Ubuntu", system-ui, sans-serif;
+    --mono: "Ubuntu Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f5f4f9; --panel: #ffffff; --panel-2: #efedf5; --line: #dddae6;
+      --text: #1d1b26; --muted: #6b6879; --accent: #008c99; --accent-ink: #ffffff;
+      --danger: #d6334a; --warn: #a86b00; --ok: #1f8a3a;
+      --trivial: #14967a; --easy: #1f9d3f; --normal: #b08900; --hard: #d6334a; --intense: #8a4fe0; --master: #0a9bab; --masterplus: #066a75;
+    }
+  }
+  :root[data-theme="light"] {
+      --bg: #f5f4f9; --panel: #ffffff; --panel-2: #efedf5; --line: #dddae6;
+      --text: #1d1b26; --muted: #6b6879; --accent: #008c99; --accent-ink: #ffffff;
+      --danger: #d6334a; --warn: #a86b00; --ok: #1f8a3a;
+      --trivial: #14967a; --easy: #1f9d3f; --normal: #b08900; --hard: #d6334a; --intense: #8a4fe0; --master: #0a9bab; --masterplus: #066a75;
+  }
+  * { box-sizing: border-box; }
+  button, input, select, textarea { font-family: inherit; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--sans); }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 18px 24px 6px; }
+  .brand { display: flex; flex-direction: column; gap: 1px; margin-right: 6px; }
+  header h1 { margin: 0; font: 600 26px/1.2 var(--sans); letter-spacing: .2px; white-space: nowrap; }
+  header h1 span { color: var(--accent); }
+  header .sub { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .tabs { margin-left: auto; display: flex; gap: 3px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .tabs a { padding: 6px 14px; border-radius: 7px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+  .tabs a:hover { color: var(--text); }
+  .tabs a.on { background: var(--accent); color: var(--accent-ink); }
+  .tabs .count { font: 600 11px var(--sans); background: var(--panel-2); color: var(--muted); border-radius: 999px; padding: 0 7px; }
+  .tabs a.on .count { background: color-mix(in srgb, var(--accent-ink) 22%, transparent); color: var(--accent-ink); }
+  main { display: grid; gap: 20px; padding: 14px 24px 60px; max-width: 1280px; }
+  #viewMake { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+  #viewTree { max-width: none; }
+  #viewExport { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
+  #viewSettings { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .setrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .setrow:last-child { border-bottom: 0; }
+  .setrow b { font-weight: 600; }
+  .setrow .hint { margin-top: 2px; }
+  .meter { height: 7px; border-radius: 4px; background: var(--panel-2); overflow: hidden; margin: 8px 0 4px; }
+  .meter i { display: block; height: 100%; background: var(--accent); }
+  .stat { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+  .stat span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (max-width: 900px) { main { padding: 12px 16px 60px; } #viewMake, #viewExport, #viewSettings { grid-template-columns: 1fr; } header { padding: 16px 16px 4px; } .tabs { margin-left: 0; } }
+  .col { display: grid; gap: 20px; min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; min-width: 0; }
+  .card h2 { margin: 0 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .cardhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .cardhead h2 { margin: 0; }
+  .field { margin-bottom: 16px; }
+  .field > label, .label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 5px; }
+  input[type=text], textarea, select {
+    width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 8px; padding: 9px 11px; font: inherit; outline: none;
+  }
+  input[type=text]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  #fName { font: 600 20px/1.3 var(--sans); }
+  textarea { min-height: 96px; resize: vertical; font-size: 14.5px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { flex: 1 1 80px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted);
+                padding: 8px 6px; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; }
+  .seg button:hover { color: var(--text); }
+  .seg button.on { color: var(--c, var(--accent)); border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 14%, transparent); }
+  .kinds button { flex: 1 1 100px; }
+
+  .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .toggle input { display: none; }
+  .toggle .sw { display: block; width: 38px; height: 22px; border-radius: 11px; background: var(--line); position: relative; transition: .15s; flex: none; }
+  .toggle .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--text); transition: .15s; }
+  .toggle input:checked + .sw { background: var(--accent); }
+  .toggle input:checked + .sw::after { left: 19px; background: var(--accent-ink); }
+  .toggles { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-bottom: 16px; }
+
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .stepper button { width: 34px; height: 36px; border: 0; background: var(--panel-2); color: var(--text); font-size: 18px; cursor: pointer; }
+  .stepper button:disabled { color: var(--muted); cursor: default; }
+  .stepper output { min-width: 44px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .chips:empty { display: none; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--panel-2); border: 1px solid var(--line);
+          border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 13px; }
+  .chip.missing { border-style: dashed; color: var(--warn); }
+  .chip button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 4px; }
+  .chip button:hover { color: var(--danger); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); flex: none; display: inline-block; }
+
+  .primary { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 9px; padding: 11px 22px; font: inherit; font-weight: 700; cursor: pointer; }
+  .primary:disabled { opacity: .45; cursor: default; }
+  .ghost { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 9px; padding: 10px 16px; font: inherit; cursor: pointer; text-decoration: none; display: inline-block; }
+  .ghost:hover { color: var(--text); border-color: var(--line-strong, var(--muted)); }
+  .small { padding: 5px 11px; font-size: 13px; border-radius: 7px; }
+  .danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .kbd { color: var(--muted); font: 13.5px var(--mono); }
+  .mono { font-family: var(--mono); }
+
+  pre.code { margin: 0; white-space: pre-wrap; word-break: break-word; font: 14px/1.5 var(--mono);
+             background: var(--panel-2); border-radius: 8px; padding: 12px; color: var(--muted); max-height: 460px; overflow: auto; }
+  pre.code .k { color: var(--accent); }
+  pre.code .h { color: var(--text); font-weight: 600; }
+  .issues div { font-size: 13px; margin-top: 8px; color: var(--warn); }
+  .issues div.err { color: var(--danger); }
+  .issues div.ok { color: var(--ok); }
+
+  .sitem { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; }
+  .sitem:hover { background: var(--panel-2); }
+  .sitem.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .sitem .nm { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .sitem .meta { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .sitem .flag { font-size: 12px; }
+  .flag.bad { color: var(--danger); } .flag.warn { color: var(--warn); } .flag.ok { color: var(--ok); }
+  .subhead { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 12px 4px 4px; }
+  .empty-note { color: var(--muted); font-size: 14px; padding: 6px 0; }
+  .empty-note a { color: var(--accent); cursor: pointer; }
+  .pill { font: 12px var(--mono); color: var(--accent); background: var(--panel-2); border-radius: 5px; padding: 1px 7px; }
+
+  /* tree */
+  .tree-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .tree-bar .grow { flex: 1; }
+  .tree-wrap { position: relative; height: calc(100dvh - 190px); min-height: 420px; overflow: hidden; background: var(--panel);
+               border: 1px solid var(--line); border-radius: var(--radius);
+               background-image: radial-gradient(circle, color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 1.4px); background-size: 24px 24px; }
+  #treeSvg { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; user-select: none; }
+  #treeSvg.dragging { cursor: grabbing; }
+  #treeSvg .tnode { cursor: pointer; }
+  #treeSvg .tnode, #treeSvg .tedge { transition: opacity .15s; }
+  #treeSvg.tracing .tnode:not(.lit), #treeSvg.tracing .tedge:not(.lit) { opacity: .14; }
+  #treeSvg .tedge path { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+  #treeSvg .tedge.lit path { stroke: var(--accent); stroke-width: 2.4; }
+  #treeSvg .tedge.task path { stroke-dasharray: 5 4; }
+  #treeSvg .tnode rect { stroke-width: 2; }
+  #treeSvg .tnode.missing rect { stroke-dasharray: 5 4; }
+  #treeSvg .tnode text { fill: var(--text); font: 600 13px var(--sans); pointer-events: none; }
+  #treeSvg .tnode text.sm { font: 500 11px var(--sans); fill: var(--muted); }
+  .tree-legend { position: absolute; left: 12px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: calc(100% - 24px);
+                 font-size: 12px; color: var(--muted); background: color-mix(in srgb, var(--panel) 88%, transparent); border-radius: 8px; padding: 4px 8px; }
+  .tree-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .tree-empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); padding: 20px; }
+  .tree-empty > div { max-width: 380px; display: grid; gap: 12px; justify-items: center; }
+  @media (max-width: 700px) { .tree-legend { display: none; } .tree-wrap { height: calc(100dvh - 250px); } }
+
+  /* export */
+  .picklist { max-height: 340px; overflow: auto; margin: 0 -6px 12px; }
+  .pick { display: flex; align-items: center; gap: 10px; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .pick:hover { background: var(--panel-2); }
+  .pick input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .pick .meta { margin-left: auto; color: var(--muted); font-size: 12.5px; }
+  .drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 16px; text-align: center; color: var(--muted); font-size: 14px; }
+  .drop.over { border-color: var(--accent); color: var(--text); }
+  .drop textarea { margin-top: 10px; min-height: 90px; font: 13.5px var(--mono); }
+
+  #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(120px); transition: .25s;
+           background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--ok); border-radius: 10px;
+           padding: 12px 16px; max-width: min(560px, calc(100vw - 32px)); box-shadow: 0 10px 30px rgba(0,0,0,.4); z-index: 10; }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.err { border-left-color: var(--danger); }
+  .banner { background: color-mix(in srgb, var(--warn) 12%, var(--panel)); border: 1px solid var(--warn); color: var(--text); border-radius: 10px; padding: 10px 14px; margin: 8px 24px 0; font-size: 13.5px; }
+  footer { padding: 0 24px 40px; color: var(--muted); font-size: 12.5px; max-width: 1280px; }
+  @media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+
+  /* ---- touch and small screens ---- */
+  button, .tnode, .sitem, .pick, .toggle { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .sitem { touch-action: pan-y; }
+  .addwrap { display: flex; gap: 8px; }
+  .addwrap .ghost { flex: none; }
+  .touch-only { display: none; }
+  .sitem.swiping { background: color-mix(in srgb, var(--danger) 16%, transparent); transition: none; }
+  .sitem { transition: transform .18s, background .15s; }
+  .stickybar { }
+  .issues { margin-bottom: 4px; }
+
+  #sheet { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.45); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet-box { width: min(560px, 100%); background: var(--panel); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0;
+               padding: 8px 20px calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px rgba(0,0,0,.4); animation: rise .2s ease-out; touch-action: none; }
+  @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+  .grip { width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 4px auto 14px; }
+  .sheet-box h3 { margin: 0 0 2px; font: 600 21px/1.25 var(--sans); overflow-wrap: anywhere; }
+  .sheet-box .ssub { color: var(--muted); font-size: 13.5px; display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
+  .sheet-box .srow { margin: 0 0 10px; font-size: 14px; }
+  .sheet-box .srow b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+  .sheet-box .actions { margin-top: 14px; }
+  .sheet-box .actions .primary { flex: 1; }
+
+  @media (pointer: coarse) {
+    input[type=text], textarea, select { font-size: 16px; }
+    .seg button { min-height: 44px; }
+    .stepper button { width: 48px; height: 44px; font-size: 22px; }
+    .stepper output { min-width: 52px; }
+    .chip { padding: 5px 6px 5px 12px; font-size: 14px; }
+    .chip button { font-size: 20px; padding: 0 8px; }
+    .sitem { padding: 12px 10px; }
+    .pick { padding: 11px 8px; }
+    .toggle .sw { width: 46px; height: 26px; border-radius: 13px; }
+    .toggle .sw::after { width: 20px; height: 20px; }
+    .toggle input:checked + .sw::after { left: 23px; }
+    .ghost, .primary { min-height: 44px; }
+    .ghost.small { min-height: 40px; padding: 8px 14px; }
+    .tabs a { padding: 9px 16px; }
+    .kbd.desk { display: none; }
+    .touch-only { display: block; }
+    .tree-bar .ghost.small { min-width: 44px; }
+    #treeSvg { touch-action: none; }
+  }
+  @media (max-width: 760px) {
+    header { padding: 12px 16px 2px; gap: 8px; }
+    header h1 { font-size: 22px; }
+    header .sub { display: none; }
+    #themeBtn { margin-left: auto; }
+    body { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
+    .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; margin: 0; border-radius: 0; border-width: 1px 0 0; padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: color-mix(in srgb, var(--panel) 96%, transparent); backdrop-filter: blur(10px); }
+    .tabs a { justify-content: center; padding: 11px 4px; font-size: 14px; }
+    .tabs .count { display: none; }
+    main { padding: 10px 12px 24px; gap: 14px; }
+    .col { gap: 14px; }
+    .card { padding: 14px; }
+    .banner { margin: 6px 12px 0; }
+    footer { padding: 0 16px 24px; }
+    #fName { font-size: 20px; }
+    .stickybar { position: sticky; bottom: calc(68px + env(safe-area-inset-bottom)); z-index: 4; margin: 12px -14px -14px; padding: 10px 14px;
+                 background: color-mix(in srgb, var(--panel) 96%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); }
+    .stickybar { flex-wrap: nowrap; gap: 8px; }
+    .stickybar .primary { flex: 1 1 auto; padding: 11px 14px; }
+    .stickybar .ghost { flex: none; padding: 10px 12px; font-size: 14px; }
+    #toast { bottom: calc(84px + env(safe-area-inset-bottom)); }
+    .tree-wrap { height: calc(100dvh - 240px - env(safe-area-inset-bottom)); min-height: 320px; }
+    .tree-bar .grow { display: none; }
+    .tree-bar #treeNote { width: 100%; order: 9; }
+    pre.code { max-height: 300px; font-size: 13px; }
+    .picklist { max-height: 46vh; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>2gg <span>Create</span></h1><div class="sub">challenges and tasks, on their way to the Studio</div></div>
+  <nav class="tabs" id="tabs">
+    <a href="#make" data-view="make">Make</a>
+    <a href="#tree" data-view="tree">Tree <span class="count" id="cntTree">0</span></a>
+    <a href="#export" data-view="export">Export <span class="count" id="cntAll">0</span></a>
+    <a href="#settings" data-view="settings">Settings</a>
+  </nav>
+  <button class="ghost small" id="themeBtn" type="button" title="Switch light and dark">Theme</button>
+</header>
+<div class="banner" id="noStore" hidden>This browser is blocking storage, so nothing you make here will be kept after you close the tab. Export before you leave.</div>
+
+<!-- ============ MAKE ============ -->
+<main id="viewMake">
+  <div class="col">
+    <section class="card">
+      <div class="cardhead"><h2 id="formTitle">New challenge</h2><span class="kbd" id="dirtyMark"></span></div>
+      <div class="field"><div class="seg kinds" id="kindSeg"></div></div>
+      <div class="field"><label for="fName">Name</label><input type="text" id="fName" autocomplete="off" spellcheck="false" placeholder="Name it"></div>
+      <div id="formFields"></div>
+      <div class="field"><label for="fBody">Description</label><textarea id="fBody" placeholder="What has to be done, and any rules."></textarea></div>
+      <div class="issues" id="issues"></div>
+      <div class="actions stickybar">
+        <button class="primary" id="saveBtn" type="button">Save</button>
+        <button class="ghost" id="newBtn" type="button">New</button>
+        <button class="ghost" id="dupBtn" type="button">Duplicate</button>
+        <button class="ghost danger" id="delBtn" type="button">Delete</button>
+        <span class="kbd desk">Ctrl+S saves</span>
+      </div>
+    </section>
+  </div>
+  <div class="col">
+    <section class="card">
+      <div class="cardhead"><h2>Saved in this browser</h2><input type="text" id="search" placeholder="Filter..." style="width:140px" aria-label="Filter saved items"></div>
+      <div id="savedList"></div>
+      <div class="hint touch-only">Tap to edit. Swipe a row left to delete it. Swipe the page sideways to change tab.</div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>Markup preview</h2><button class="ghost small" id="copyOne" type="button">Copy</button></div>
+      <pre class="code" id="preview"></pre>
+    </section>
+  </div>
+</main>
+
+<!-- ============ TREE ============ -->
+<main id="viewTree" hidden>
+  <div class="tree-bar">
+    <button class="ghost small" id="zIn" type="button" aria-label="Zoom in">+</button>
+    <button class="ghost small" id="zOut" type="button" aria-label="Zoom out">-</button>
+    <button class="ghost small" id="zFit" type="button">Fit</button>
+    <label class="toggle" style="margin-left:8px"><input type="checkbox" id="showTasks" checked><span class="sw"></span><span>Show tasks</span></label>
+    <span class="grow"></span>
+    <span class="kbd" id="treeNote"></span>
+  </div>
+  <div class="tree-wrap" id="treeWrap">
+    <svg id="treeSvg" role="img" aria-label="Preview of saved challenges"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="context-stroke"/></marker></defs><g id="treeVp"></g></svg>
+    <div class="tree-legend" id="legend"></div>
+    <div class="tree-empty" id="treeEmpty" hidden><div><div>No challenges saved yet. Make one on the Make tab and it will appear here, linked to whatever it requires and unlocks.</div><button class="ghost" id="loadDemo" type="button">Load a small example</button></div></div>
+  </div>
+</main>
+
+<!-- ============ EXPORT ============ -->
+<main id="viewExport" hidden>
+  <div class="col">
+    <section class="card">
+      <div class="cardhead"><h2>Pick what to send</h2><span class="actions"><button class="ghost small" id="pickAll" type="button">All</button><button class="ghost small" id="pickNone" type="button">None</button></span></div>
+      <div class="picklist" id="pickList"></div>
+      <div class="actions">
+        <button class="primary" id="dlBtn" type="button">Download .2gg</button>
+        <button class="ghost" id="copyBtn" type="button">Copy</button>
+        <button class="ghost" id="shareBtn" type="button" hidden>Share...</button>
+      </div>
+      <div class="hint">Send the file to the Studio owner, who imports it on the Studio's import page. Links to challenges that are not in the file must already exist in the vault.</div>
+      <div class="issues" id="exIssues"></div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>Import</h2></div>
+      <div class="drop" id="drop">
+        Drop a .2gg file here, or <button class="ghost small" id="pickFile" type="button">choose a file</button>
+        <input type="file" id="fileIn" accept=".2gg,.txt,text/plain" multiple hidden>
+        <textarea id="pasteIn" placeholder="...or paste 2gg markup here" spellcheck="false"></textarea>
+        <div class="actions" style="justify-content:center;margin-top:10px"><button class="ghost small" id="pasteBtn" type="button">Import pasted text</button></div>
+      </div>
+      <div class="hint">Items with the same kind and name replace the saved ones.</div>
+    </section>
+  </div>
+  <section class="card"><div class="cardhead"><h2>File contents</h2></div><pre class="code" id="exPreview"></pre></section>
+</main>
+
+<!-- ============ SETTINGS ============ -->
+<main id="viewSettings" hidden>
+  <div class="col">
+    <section class="card">
+      <div class="cardhead"><h2>Preferences</h2><button class="ghost small" id="resetPrefs" type="button">Reset</button></div>
+      <div class="field"><div class="label">Theme</div><div class="seg" id="setTheme"><button type="button" data-v="auto">Match device</button><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div></div>
+      <div class="field"><div class="label">Kind to start with</div><div class="seg" id="setKind"></div><div class="hint">What "New" and a fresh page open as.</div></div>
+      <div class="field"><div class="label">When an import has an item you already have</div><div class="seg" id="setConflict"><button type="button" data-v="replace">Replace mine</button><button type="button" data-v="skip">Keep mine</button></div></div>
+      <div class="toggles" style="flex-direction:column;gap:14px;margin-bottom:0">
+        <label class="toggle"><input type="checkbox" data-pref="confirmDelete"><span class="sw"></span><span>Ask before deleting one item</span></label>
+        <label class="toggle"><input type="checkbox" data-pref="warnUnsaved"><span class="sw"></span><span>Warn me before leaving with unsaved changes</span></label>
+        <label class="toggle"><input type="checkbox" data-pref="showTasks"><span class="sw"></span><span>Show tasks on the tree by default</span></label>
+        <label class="toggle" id="hapticRow"><input type="checkbox" data-pref="haptics"><span class="sw"></span><span>Vibrate on touch actions</span></label>
+      </div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>Backup</h2></div>
+      <div class="actions">
+        <button class="ghost" id="bkDownload" type="button">Download backup</button>
+        <button class="ghost" id="bkRestore" type="button">Restore from backup</button>
+        <input type="file" id="bkFile" accept=".json,application/json" hidden>
+      </div>
+      <div class="hint">A backup holds every saved item and your preferences, as one JSON file. Restoring adds to what you have; an item with the same internal id is replaced.</div>
+    </section>
+  </div>
+  <div class="col">
+    <section class="card">
+      <div class="cardhead"><h2>What is stored</h2></div>
+      <div id="storeInfo"></div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>Clean up</h2></div>
+      <div class="setrow"><div><b>Example data</b><div class="hint" id="demoInfo"></div></div><span class="actions"><button class="ghost small" id="demoLoad" type="button">Load</button><button class="ghost small" id="demoClear" type="button">Clear</button></span></div>
+      <div class="setrow"><div><b>Items that need fixing</b><div class="hint" id="badInfo"></div></div><button class="ghost small" id="badClear" type="button">Delete</button></div>
+      <div class="subhead">Delete by kind</div>
+      <div id="kindClear"></div>
+      <div class="setrow" style="margin-top:12px"><div><b>Everything</b><div class="hint">All saved items. Your preferences stay.</div></div><button class="ghost small danger" id="clearBtn" type="button">Delete all</button></div>
+      <div class="setrow"><div><b>Factory reset</b><div class="hint">All items and all preferences, as if you had never used this page here.</div></div><button class="ghost small danger" id="factoryBtn" type="button">Reset</button></div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>About</h2></div>
+      <div class="hint" style="margin:0">2gg Create. Markup v<span id="aboutV"></span>. Everything stays in this browser; nothing is sent anywhere.</div>
+    </section>
+  </div>
+</main>
+
+<footer>Made items live only in this browser until you export them. Nothing on this page is sent anywhere.</footer>
+<div id="sheet" hidden><div class="sheet-box" id="sheetBox" role="dialog" aria-modal="true"><div class="grip" id="grip"></div><div id="sheetBody"></div></div></div>
+<div id="toast" role="status"></div>
+<datalist id="dl-challenge"></datalist><datalist id="dl-task"></datalist><datalist id="dl-punishment"></datalist>
+
+<script>
+"use strict";
+/* ============ 2gg markup (port of cli/2ggmarkup.py; keep the two in step) ============ */
+const VERSION = 1;
+const SPEC = {
+  challenge: [["id","text",[]],["difficulty","text",[]],["repeatable","bool",[]],["attempt mode","bool",["attempt"]],
+    ["reward","int",["first reward","reward first time"]],["repeat reward","int",["reward repeat"]],
+    ["requires","list",["require","required","requires challenge","required challenges"]],
+    ["unlocks","list",["unlock","unlocks challenge","unlocks challenges"]],
+    ["task","list",["tasks","requires task","required task","required tasks"]]],
+  task: [["type","text",[]],["frequency","text",[]],["reward","int",[]],["damage","int",["damage if missed"]],
+    ["punish","text",["punishment","punish if missed","punishment if missed"]]],
+  game: [["id","text",[]],["weight","num",["difficulty weight","base weight"]],["reward","int",[]],
+    ["auto difficulty","bool",["auto"]],["option","list",["options"]]],
+  series: [["prefix","text",[]],["colour","text",["color"]],["also","list",["also includes","also in"]]],
+  punishment: [["size","text",[]]],
+};
+const KIND_ALIASES = {challenges:"challenge",tasks:"task",games:"game",punishments:"punishment",punish:"punishment"};
+const UNSUPPORTED = new Set(["friend","friends","chievo","chievos","settings","setting","config","tiers","tier"]);
+const KIND_ORDER = ["punishment","task","game","challenge","series"];
+const KIND_LABEL = {challenge:"Challenge",task:"Task",game:"Game",series:"Series",punishment:"Punishment"};
+const PL = k => k === "series" ? "Series" : KIND_LABEL[k] + "s";
+const DIFFICULTIES = ["Trivial","Easy","Normal","Hard","Intense","Master"];
+const TASK_TYPES = ["Habit","Chore","Admin","Project"];
+const TASK_FREQ = ["Hourly","Daily","Weekdays","Weekends","Weekly","Biweekly","Monthly","Yearly","One-time","Milestone","Custom"];
+
+const normKey = s => s.replace(/[?_-]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+const LOOKUP = {};
+for (const k in SPEC) { LOOKUP[k] = {}; for (const [key, typ, al] of SPEC[k]) for (const a of [key, ...al]) LOOKUP[k][normKey(a)] = [key, typ]; }
+const TRUE = new Set(["yes","true","y","on","1"]), FALSE = new Set(["no","false","n","off","0",""]);
+
+function parseMarkup(text) {
+  const items = [], errors = []; let skipped = 0, cur = null, state = "top", body = [];
+  const err = (line, message) => errors.push({line, message});
+  const finish = () => { if (cur) { cur.body = body.join("\n").trim(); items.push(cur); } cur = null; body = []; };
+  const lines = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n").split("\n");
+  lines.forEach((line, i) => {
+    const n = i + 1;
+    if (line.startsWith("@")) {
+      finish();
+      const m = /^@([A-Za-z]+)[ \t]*(.*?)\s*$/.exec(line);
+      const head = m ? m[1].toLowerCase() : "";
+      const kind = KIND_ALIASES[head] || head;
+      if (UNSUPPORTED.has(head)) { skipped++; state = "skip"; }
+      else if (!SPEC[kind]) { err(n, `Unknown kind "${line.split(/\s/)[0]}".`); state = "skip"; }
+      else if (!m[2]) { err(n, `@${kind} needs a name, like: @${kind} My name`); state = "skip"; }
+      else { cur = {kind, name: m[2], fields: {}, body: "", line: n}; state = "fields"; }
+      return;
+    }
+    if (state === "top") {
+      if (!line.trim()) return;
+      const v = /^#\s*2gg markup v(\d+)/i.exec(line);
+      if (v) { if (+v[1] > VERSION) err(n, `This file is markup v${v[1]}; this page understands up to v${VERSION}.`); return; }
+      if (line.trimStart().startsWith("#")) return;
+      err(n, 'Text before the first item. Items start with a line like "@challenge Name".'); state = "skip";
+    } else if (state === "fields") {
+      if (!line.trim()) { state = "body"; return; }
+      if (line.trimStart().startsWith("#")) return;
+      const m = /^([A-Za-z][A-Za-z ?_-]*?)\s*:\s*(.*?)\s*$/.exec(line);
+      if (!m) { err(n, `Expected "key: value" in ${cur.name}. Put a blank line before the description.`); return; }
+      const spec = LOOKUP[cur.kind][normKey(m[1])];
+      if (!spec) { err(n, `Unknown field "${m[1].trim()}" for a ${cur.kind}.`); return; }
+      const [key, typ] = spec, value = m[2];
+      if (typ === "list") { if (value) (cur.fields[key] = cur.fields[key] || []).push(value); return; }
+      if (key in cur.fields) { err(n, `"${key}" is given twice in ${cur.name}.`); return; }
+      if (value === "" && typ !== "text") return;
+      if (typ === "int") { if (!/^-?\d+$/.test(value)) return err(n, `"${key}" in ${cur.name}: expected a number.`); cur.fields[key] = parseInt(value, 10); }
+      else if (typ === "num") { if (isNaN(parseFloat(value))) return err(n, `"${key}" in ${cur.name}: expected a number.`); cur.fields[key] = parseFloat(value); }
+      else if (typ === "bool") { const v = value.toLowerCase(); if (TRUE.has(v)) cur.fields[key] = true; else if (FALSE.has(v)) cur.fields[key] = false; else err(n, `"${key}" in ${cur.name}: use yes or no.`); }
+      else cur.fields[key] = value;
+    } else if (state === "body") body.push(line.startsWith("\\@") ? line.slice(1) : line);
+  });
+  finish();
+  return {items, errors, skipped};
+}
+const flat = v => String(v).replace(/\s*\n\s*/g, " ").trim();
+function emitItem(it) {
+  const out = [`@${it.kind} ${flat(it.name)}`];
+  for (const [key, typ] of SPEC[it.kind]) {
+    const v = it.fields[key];
+    if (v === undefined || v === null || v === "" || (Array.isArray(v) && !v.length)) continue;
+    if (typ === "list") out.push(...v.map(x => `${key}: ${flat(x)}`).filter(l => !l.endsWith(": ")));
+    else if (typ === "bool") out.push(`${key}: ${v ? "yes" : "no"}`);
+    else if (typ === "num") out.push(`${key}: ${(+v).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}`);
+    else out.push(`${key}: ${flat(v)}`.trimEnd());
+  }
+  const body = (it.body || "").trim();
+  if (body) out.push("", ...body.split("\n").map(l => l.startsWith("@") ? "\\" + l : l));
+  return out.join("\n");
+}
+function emitAll(items) {
+  const rank = k => { const i = KIND_ORDER.indexOf(k); return i < 0 ? 99 : i; };
+  const sorted = items.map((x, i) => [x, i]).sort((a, b) => rank(a[0].kind) - rank(b[0].kind) || a[1] - b[1]).map(p => p[0]);
+  return ["# 2gg markup v" + VERSION, ...sorted.map(emitItem)].join("\n\n") + "\n";
+}
+
+/* ============ storage ============ */
+const KEY = "2gg-maker-v1";
+let memoryOnly = false, store = {items: []};
+function loadStore() {
+  try { const raw = localStorage.getItem(KEY); if (raw) { const s = JSON.parse(raw); if (s && Array.isArray(s.items)) store = s; } }
+  catch { memoryOnly = true; }
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(store)); memoryOnly = false; }
+  catch { memoryOnly = true; }
+  $("#noStore").hidden = !memoryOnly;
+}
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+
+/* preferences */
+const PREF_KEY = "2gg-maker-prefs";
+const PREF_DEFAULTS = {theme: "auto", defaultKind: "challenge", conflict: "replace", confirmDelete: true, warnUnsaved: true, showTasks: true, haptics: true};
+let prefs = {...PREF_DEFAULTS};
+function loadPrefs() {
+  try { const p = JSON.parse(localStorage.getItem(PREF_KEY) || "null"); if (p && typeof p === "object") prefs = {...PREF_DEFAULTS, ...p}; } catch {}
+  try { const old = localStorage.getItem("2gg-maker-theme"); if (old && !localStorage.getItem(PREF_KEY)) prefs.theme = old; } catch {}
+}
+function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch {} }
+function applyTheme() {
+  if (prefs.theme === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = prefs.theme;
+}
+
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ckey = s => String(s).trim().toLowerCase();
+const stripLink = s => { const m = /^\s*\[\[([^\]|]+)(?:\|[^\]]*)?\]\]\s*$/.exec(s); return m ? m[1].trim() : String(s).trim(); };
+const diffColor = d => { d = String(d || ""); const k = d.toLowerCase(); return DIFFICULTIES.some(x => x.toLowerCase() === k) ? `var(--${k})` : /^master\+\d+$/i.test(d) ? "var(--masterplus)" : "var(--muted)"; };
+const buzz = ms => { try { if (prefs.haptics && navigator.vibrate) navigator.vibrate(ms); } catch {} };
+const coarse = () => matchMedia("(pointer: coarse)").matches;
+let toastT;
+function toast(html, bad) { const t = $("#toast"); t.innerHTML = html; t.className = "show" + (bad ? " err" : ""); clearTimeout(toastT); toastT = setTimeout(() => t.className = "", 3600); }
+
+/* ============ editor state ============ */
+let cur = blank("challenge"), curUid = null, dirty = false;
+function blank(kind) {
+  const f = {};
+  if (kind === "challenge") Object.assign(f, {difficulty: "Normal", repeatable: false, reward: 1});
+  if (kind === "task") Object.assign(f, {type: "Habit", frequency: "Daily", reward: 1});
+  if (kind === "game") Object.assign(f, {weight: 1, reward: 1});
+  if (kind === "punishment") f.size = "Small";
+  return {kind, name: "", fields: f, body: ""};
+}
+const FORM = {
+  challenge: [
+    {k: "difficulty", l: "Difficulty", t: "diff"},
+    {k: "reward", l: "Cone charge reward (first time)", t: "int", w: 1},
+    {k: "repeat reward", l: "Cone charge reward (each repeat)", t: "int", w: 1, show: f => f.repeatable},
+    {k: "repeatable", l: "Repeatable", t: "bool", g: "tog"},
+    {k: "attempt mode", l: "Attempt mode", t: "bool", g: "tog", omit: true},
+    {k: "requires", l: "Required challenges", t: "list", sug: "challenge", hint: "Challenges that have to be done first."},
+    {k: "unlocks", l: "Unlocks challenges", t: "list", sug: "challenge"},
+    {k: "task", l: "Required tasks", t: "list", sug: "task"},
+    {k: "id", l: "ID", t: "text", hint: "Optional. Leave it blank and the Studio picks one."},
+  ],
+  task: [
+    {k: "type", l: "Type", t: "seg", opts: TASK_TYPES},
+    {k: "frequency", l: "Frequency", t: "freq"},
+    {k: "reward", l: "Cone charge reward", t: "int"},
+    {k: "damage", l: "Damage if missed", t: "int"},
+    {k: "punish", l: "Punishment if missed", t: "text", sug: "punishment", hint: "Small, Big, or the name of a punishment. Blank for none."},
+  ],
+  game: [
+    {k: "weight", l: "Difficulty weight", t: "num"},
+    {k: "reward", l: "Cone charge reward", t: "int"},
+    {k: "auto difficulty", l: "Auto difficulty", t: "bool", g: "tog", omit: true},
+    {k: "option", l: "Options", t: "list", hint: "One per line, like: Hard mode | toggle | +1 | 0.5"},
+    {k: "id", l: "ID", t: "text"},
+  ],
+  series: [
+    {k: "prefix", l: "ID prefix", t: "text", hint: "Letters, then letters, digits, - or _. Challenge IDs are built from it."},
+    {k: "colour", l: "Colour", t: "text", hint: "A number from 1 to 6, or a #rrggbb code."},
+    {k: "also", l: "Also includes", t: "list", sug: "challenge"},
+  ],
+  punishment: [
+    {k: "size", l: "Size", t: "seg", opts: ["Small", "Big"]},
+  ],
+};
+
+function setF(k, v, omit) { if (omit && !v) delete cur.fields[k]; else cur.fields[k] = v; touch(); }
+function touch() { dirty = true; renderMeta(); }
+
+function renderKinds() {
+  $("#kindSeg").innerHTML = Object.keys(FORM).map(k => `<button type="button" data-kind="${k}" class="${cur.kind === k ? "on" : ""}">${KIND_LABEL[k]}</button>`).join("");
+}
+function renderForm() {
+  const f = cur.fields, defs = FORM[cur.kind];
+  const parts = []; let togRun = [];
+  const flush = () => { if (togRun.length) parts.push(`<div class="toggles">${togRun.join("")}</div>`); togRun = []; };
+  let pairOpen = [];
+  const flushPair = () => { if (pairOpen.length) parts.push(`<div class="row">${pairOpen.join("")}</div>`); pairOpen = []; };
+  for (const d of defs) {
+    if (d.show && !d.show(f)) continue;
+    const v = f[d.k];
+    if (d.t === "bool") { togRun.push(`<label class="toggle"><input type="checkbox" data-k="${d.k}" ${d.omit ? "data-omit=1" : ""} ${v ? "checked" : ""}><span class="sw"></span><span>${d.l}</span></label>`); continue; }
+    flush();
+    let inner = "";
+    if (d.t === "diff") {
+      const opts = DIFFICULTIES.slice(); if (v && !opts.includes(v)) opts.push(v);
+      inner = `<div class="seg">${opts.map(o => `<button type="button" data-k="${d.k}" data-v="${esc(o)}" class="${v === o ? "on" : ""}" style="--c:${diffColor(o)}">${esc(o)}</button>`).join("")}</div>`;
+    } else if (d.t === "seg") {
+      inner = `<div class="seg">${d.opts.map(o => `<button type="button" data-k="${d.k}" data-v="${o}" class="${v === o ? "on" : ""}">${o}</button>`).join("")}</div>`;
+    } else if (d.t === "int" || d.t === "num") {
+      const val = v ?? 0, step = d.t === "num" ? 0.25 : 1;
+      inner = `<div class="stepper" data-stepper="${d.k}" data-step="${step}"><button type="button" data-d="-1" ${val <= 0 ? "disabled" : ""}>-</button><output>${val}</output><button type="button" data-d="1">+</button></div>`;
+    } else if (d.t === "freq") {
+      const head = String(v || "Daily").split(":")[0].trim(), rule = String(v || "").includes(":") ? String(v).split(":").slice(1).join(":").trim() : "";
+      inner = `<select data-freq>${TASK_FREQ.map(o => `<option ${o.toLowerCase() === head.toLowerCase() ? "selected" : ""}>${o}</option>`).join("")}</select>` +
+        (head.toLowerCase() === "custom" ? `<input type="text" data-freqrule value="${esc(rule)}" placeholder="every 2 weeks except thursday" style="margin-top:8px">` +
+          `<div class="hint">Looks like: every N day(s)/week(s)/month(s)/year(s), plus an optional "except weekday".</div>` : "");
+    } else if (d.t === "list") {
+      const vals = v || [];
+      const known = d.sug ? new Set(items(d.sug).map(i => ckey(i.name))) : null;
+      inner = `<div class="chips">${vals.map((x, i) => `<span class="chip ${known && !known.has(ckey(stripLink(x))) ? "missing" : ""}">${esc(x)}<button type="button" data-rm="${d.k}" data-i="${i}" aria-label="Remove">&times;</button></span>`).join("")}</div>` +
+        `<div class="addwrap"><input type="text" data-add="${d.k}" ${d.sug ? `list="dl-${d.sug}"` : ""} placeholder="${d.sug ? "Type a name" : "Type an option"}" autocomplete="off" autocapitalize="sentences" enterkeyhint="done"><button type="button" class="ghost small" data-addbtn="${d.k}">Add</button></div>`;
+    } else {
+      inner = `<input type="text" data-k="${d.k}" data-text value="${esc(v ?? "")}" ${d.sug ? `list="dl-${d.sug}"` : ""} autocomplete="off" spellcheck="false">`;
+    }
+    const html = `<div class="field"><div class="label">${d.l}</div>${inner}${d.hint ? `<div class="hint">${d.hint}</div>` : ""}</div>`;
+    if (d.w) { pairOpen.push(html); if (pairOpen.length === 2) flushPair(); } else { flushPair(); parts.push(html); }
+  }
+  flush(); flushPair();
+  $("#formFields").innerHTML = parts.join("");
+}
+function renderMeta() {
+  const it = curUid && store.items.find(x => x.uid === curUid);
+  $("#formTitle").textContent = it ? `Editing ${KIND_LABEL[cur.kind].toLowerCase()}` : `New ${KIND_LABEL[cur.kind].toLowerCase()}`;
+  $("#dirtyMark").textContent = dirty ? "unsaved changes" : it ? "saved" : "";
+  $("#delBtn").hidden = $("#dupBtn").hidden = !it;
+  $("#preview").innerHTML = highlight(cur.name.trim() ? emitItem(cur) : "# Give it a name to see the markup.");
+  renderIssues();
+  renderList();
+}
+function highlight(t) {
+  return t.split("\n").map(l => {
+    if (l.startsWith("@")) return `<span class="h">${esc(l)}</span>`;
+    const m = /^([a-z ]+):(.*)$/.exec(l);
+    return m ? `<span class="k">${esc(m[1])}:</span>${esc(m[2])}` : esc(l);
+  }).join("\n");
+}
+
+/* ============ validation (mirrors the Studio's import checks) ============ */
+const items = kind => store.items.filter(i => !kind || i.kind === kind);
+function check(it, all) {
+  const err = [], warn = [], f = it.fields;
+  const others = all.filter(o => o.uid !== it.uid);
+  if (!it.name.trim()) err.push("Needs a name.");
+  if (/[\\/:*?"<>|#^\[\]]/.test(it.name)) warn.push('The characters \\ / : * ? " < > | # ^ [ ] are dropped from the file name.');
+  if (it.name.trim() && others.some(o => o.kind === it.kind && ckey(o.name) === ckey(it.name))) err.push(`Another ${it.kind} is already called "${it.name.trim()}".`);
+  const missing = (list, kind, label) => (list || []).forEach(r => { if (!all.some(o => o.kind === kind && ckey(o.name) === ckey(stripLink(r)))) warn.push(`${label} "${r}" is not saved here, so it must already be in the vault.`); });
+  if (it.kind === "challenge") {
+    if (!f.difficulty) err.push("Needs a difficulty.");
+    else if (!DIFFICULTIES.includes(f.difficulty) && !/^Master\+\d+$/.test(f.difficulty)) err.push(`Unknown difficulty "${f.difficulty}".`);
+    else if (/^Master\+/.test(f.difficulty)) warn.push("Master+ tiers only work once they are unlocked in the vault.");
+    const id = String(f.id || "").trim();
+    if (id && others.some(o => o.kind === "challenge" && String(o.fields.id || "").trim().toLowerCase() === id.toLowerCase())) err.push(`ID "${id}" is already used by another saved challenge.`);
+    const self = ckey(it.name);
+    for (const k of ["requires", "unlocks"]) if ((f[k] || []).some(r => ckey(stripLink(r)) === self)) err.push("A challenge can't require or unlock itself.");
+    const a = new Set((f.requires || []).map(r => ckey(stripLink(r))));
+    if ((f.unlocks || []).some(r => a.has(ckey(stripLink(r))))) err.push("A challenge can't be both required by and unlocked by this one.");
+    missing(f.requires, "challenge", "Required challenge"); missing(f.unlocks, "challenge", "Unlocked challenge"); missing(f.task, "task", "Task");
+  } else if (it.kind === "task") {
+    const head = String(f.frequency || "").split(":")[0].trim();
+    if (f.type && !TASK_TYPES.includes(f.type)) err.push(`Unknown type "${f.type}".`);
+    if (head && !TASK_FREQ.some(x => x.toLowerCase() === head.toLowerCase())) err.push(`Unknown frequency "${f.frequency}".`);
+    if (head.toLowerCase() === "custom" && !/^every\s+\d+\s+(day|week|month|year)s?\b/i.test(String(f.frequency).split(":").slice(1).join(":").trim()))
+      err.push('Custom needs a rule like "every 2 weeks".');
+    const p = String(f.punish || "").trim();
+    if (p && !["small", "big"].includes(p.toLowerCase()) && !all.some(o => o.kind === "punishment" && ckey(o.name) === ckey(p))) warn.push(`Punishment "${p}" is not saved here, so it must already be in the vault.`);
+  } else if (it.kind === "series") {
+    const pre = String(f.prefix || "").trim();
+    if (!pre) err.push("Needs a prefix.");
+    else if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(pre)) err.push(`"${pre}" can't be an ID prefix.`);
+    else if (others.some(o => o.kind === "series" && String(o.fields.prefix || "").toLowerCase() === pre.toLowerCase())) err.push(`The prefix "${pre}" is already used by another saved series.`);
+    if (f.colour && !/^([1-6]|#[0-9a-f]{6})$/i.test(String(f.colour).trim())) err.push("Colour must be 1 to 6 or a #rrggbb code.");
+    missing(f.also, "challenge", "Challenge");
+  } else if (it.kind === "game") {
+    const id = String(f.id || "").trim();
+    if (id && others.some(o => o.kind === "game" && String(o.fields.id || "").trim().toLowerCase() === id.toLowerCase())) err.push(`ID "${id}" is already used by another saved game.`);
+    (f.option || []).forEach(o => { if (!o.includes("|")) warn.push(`Option "${o}" should look like: Name | toggle | +1 | 0.5`); });
+  }
+  return {err, warn};
+}
+function renderIssues() {
+  const all = store.items.filter(i => i.uid !== curUid).concat([{...cur, uid: curUid || "_new"}]);
+  const {err, warn} = check({...cur, uid: curUid || "_new"}, all);
+  $("#issues").innerHTML = err.map(m => `<div class="err">${esc(m)}</div>`).join("") + warn.map(m => `<div>${esc(m)}</div>`).join("") +
+    (!err.length && cur.name.trim() ? `<div class="ok">Ready to save${warn.length ? ", with the notes above" : ""}.</div>` : "");
+}
+
+/* ============ saved list ============ */
+function renderLists() {
+  for (const k of ["challenge", "task", "punishment"]) $("#dl-" + k).innerHTML = items(k).map(i => `<option value="${esc(i.name)}">`).join("");
+  $("#cntAll").textContent = store.items.length;
+  $("#cntTree").textContent = items("challenge").length;
+}
+function renderList() {
+  renderLists();
+  const q = ckey($("#search").value);
+  let html = "";
+  for (const k of KIND_ORDER.slice().reverse()) {
+    const list = items(k).filter(i => !q || ckey(i.name).includes(q)).sort((a, b) => a.name.localeCompare(b.name));
+    if (!list.length) continue;
+    html += `<div class="subhead">${PL(k)} (${list.length})</div>` + list.map(i => {
+      const r = check(i, store.items), flag = r.err.length ? `<span class="flag bad" title="${esc(r.err[0])}">needs fixing</span>` : r.warn.length ? `<span class="flag warn" title="${esc(r.warn[0])}">note</span>` : `<span class="flag ok">&#10003;</span>`;
+      const meta = k === "challenge" ? `<span class="dot" style="--c:${diffColor(i.fields.difficulty)}"></span> ${esc(i.fields.difficulty || "")}` : k === "task" ? esc(i.fields.frequency || "") : "";
+      return `<div class="sitem ${i.uid === curUid ? "on" : ""}" data-uid="${i.uid}"><span class="nm">${esc(i.name || "(unnamed)")}</span><span class="meta">${meta}</span>${flag}</div>`;
+    }).join("");
+  }
+  $("#savedList").innerHTML = html || `<div class="empty-note">Nothing saved yet. Make something and press Save. <a id="demoLink">Load an example</a></div>`;
+}
+
+/* ============ actions ============ */
+function open(it) {
+  if (dirty && !confirm("Discard your unsaved changes?")) return;
+  curUid = it ? it.uid : null;
+  cur = it ? JSON.parse(JSON.stringify({kind: it.kind, name: it.name, fields: it.fields, body: it.body})) : blank(prefs.defaultKind);
+  dirty = false; syncAll();
+}
+function syncAll() { renderKinds(); renderForm(); $("#fName").value = cur.name; $("#fBody").value = cur.body; renderMeta(); }
+function save() {
+  if (!cur.name.trim()) { toast("Give it a name first.", true); $("#fName").focus(); return; }
+  const all = store.items.filter(i => i.uid !== curUid).concat([{...cur, uid: curUid || "_new"}]);
+  const {err} = check({...cur, uid: curUid || "_new"}, all);
+  const hard = err.filter(e => !/^Needs a (difficulty|prefix)/.test(e));
+  if (hard.length) { toast(esc(hard[0]), true); return; }
+  const copy = {kind: cur.kind, name: cur.name.trim(), fields: JSON.parse(JSON.stringify(cur.fields)), body: cur.body.trim(), updated: Date.now()};
+  if (curUid) { const ex = store.items.find(i => i.uid === curUid); Object.assign(ex, copy); delete ex.demo; }  // once you edit an example it is yours
+  else { curUid = uid(); store.items.push({uid: curUid, ...copy}); }
+  persist(); dirty = false; renderMeta(); renderTreeIfVisible(); renderExport(); buzz(14);
+  toast(`Saved <b>${esc(copy.name)}</b>.`);
+}
+function delItem(uidToDel) {
+  const it = store.items.find(i => i.uid === uidToDel); if (!it) return;
+  if (prefs.confirmDelete && !confirm(`Delete "${it.name}"?`)) return renderList();
+  store.items = store.items.filter(i => i.uid !== uidToDel); persist(); buzz([10, 40, 10]);
+  if (uidToDel === curUid) { curUid = null; cur = blank(cur.kind); dirty = false; syncAll(); } else renderList();
+  renderTreeIfVisible(); renderExport();
+}
+function del() { if (curUid) delItem(curUid); }
+function dup() {
+  const it = store.items.find(i => i.uid === curUid); if (!it) return;
+  cur = {kind: it.kind, name: it.name + " copy", fields: JSON.parse(JSON.stringify(it.fields)), body: it.body}; delete cur.fields.id;
+  curUid = null; dirty = true; syncAll();
+}
+
+/* ---- editor wiring ---- */
+$("#kindSeg").addEventListener("click", e => {
+  const b = e.target.closest("button[data-kind]"); if (!b || b.dataset.kind === cur.kind) return;
+  const keepName = cur.name, keepBody = cur.body;
+  if (curUid) { if (!confirm("Start a new item of this kind? The saved one stays as it is.")) return; curUid = null; }
+  cur = blank(b.dataset.kind); cur.name = keepName; cur.body = keepBody; dirty = true; syncAll();
+});
+$("#fName").addEventListener("input", e => { cur.name = e.target.value; touch(); });
+$("#fBody").addEventListener("input", e => { cur.body = e.target.value; touch(); });
+$("#formFields").addEventListener("click", e => {
+  const seg = e.target.closest("button[data-v]");
+  if (seg) { setF(seg.dataset.k, seg.dataset.v); return renderForm(); }
+  const st = e.target.closest("[data-stepper] button");
+  if (st) {
+    const box = st.parentElement, k = box.dataset.stepper, step = +box.dataset.step;
+    const next = Math.max(0, Math.round(((cur.fields[k] ?? 0) + step * +st.dataset.d) * 100) / 100);
+    buzz(6); setF(k, next); return renderForm();
+  }
+  const ab = e.target.closest("button[data-addbtn]");
+  if (ab) return addChip($(`[data-add="${ab.dataset.addbtn}"]`));
+  const rm = e.target.closest("button[data-rm]");
+  if (rm) { buzz(8); const k = rm.dataset.rm; cur.fields[k].splice(+rm.dataset.i, 1); touch(); renderForm(); }
+});
+$("#formFields").addEventListener("change", e => {
+  const t = e.target;
+  if (t.type === "checkbox") { setF(t.dataset.k, t.checked, !!t.dataset.omit); renderForm(); }
+  else if (t.matches("[data-freq]")) { setF("frequency", t.value === "Custom" ? "Custom: every 1 week" : t.value); renderForm(); }
+  else if (t.matches("[data-add]")) addChip(t);
+});
+$("#formFields").addEventListener("input", e => {
+  const t = e.target;
+  if (t.matches("[data-text]")) { const v = t.value; if (v === "" && !["prefix", "id"].includes(t.dataset.k)) delete cur.fields[t.dataset.k]; else cur.fields[t.dataset.k] = v; touch(); }
+  else if (t.matches("[data-freqrule]")) { cur.fields.frequency = "Custom: " + t.value; touch(); }
+});
+$("#formFields").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.matches("[data-add]")) { e.preventDefault(); addChip(e.target); }
+});
+function addChip(input) {
+  const v = input.value.trim(), k = input.dataset.add; if (!v) return;
+  const list = cur.fields[k] = cur.fields[k] || [];
+  if (!list.some(x => ckey(x) === ckey(v))) list.push(v);
+  touch(); renderForm(); const again = $(`[data-add="${k}"]`); if (again) again.focus();
+}
+$("#saveBtn").onclick = save; $("#newBtn").onclick = () => open(null); $("#delBtn").onclick = del; $("#dupBtn").onclick = dup;
+$("#search").addEventListener("input", renderList);
+let swiped = false;
+$("#savedList").addEventListener("click", e => {
+  if (swiped) { swiped = false; return; }
+  if (e.target.id === "demoLink") return loadDemo();
+  const row = e.target.closest("[data-uid]"); if (row) open(store.items.find(i => i.uid === row.dataset.uid));
+});
+/* swipe a row left to delete it (touch and pen only) */
+(() => {
+  let s = null;
+  const list = $("#savedList");
+  list.addEventListener("pointerdown", e => {
+    const row = e.target.closest(".sitem"); if (!row || e.pointerType === "mouse") return;
+    s = {row, x: e.clientX, y: e.clientY, dx: 0, on: false, past: false};
+  });
+  list.addEventListener("pointermove", e => {
+    if (!s) return;
+    const dx = e.clientX - s.x, dy = e.clientY - s.y;
+    if (!s.on) { if (Math.abs(dy) > 12) { s = null; return; } if (dx < -10 && Math.abs(dx) > Math.abs(dy)) { s.on = true; list.setPointerCapture(e.pointerId); s.row.classList.add("swiping"); } else return; }
+    s.dx = Math.min(0, dx); s.row.style.transform = `translateX(${s.dx}px)`;
+    const past = s.dx < -90; if (past && !s.past) buzz(10); s.past = past;
+  });
+  const end = () => {
+    if (!s) return;
+    const {row, on, past} = s; s = null;
+    row.classList.remove("swiping"); row.style.transform = "";
+    if (on) { swiped = true; setTimeout(() => swiped = false, 350); if (past) delItem(row.dataset.uid); }
+  };
+  list.addEventListener("pointerup", end); list.addEventListener("pointercancel", end);
+})();
+$("#copyOne").onclick = () => copyText(cur.name.trim() ? emitItem(cur) + "\n" : "");
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); if (view === "make") save(); } });
+window.addEventListener("beforeunload", e => { if (dirty && prefs.warnUnsaved) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ============ export / import ============ */
+let picked = new Set();
+function renderExport() {
+  const known = new Set(store.items.map(i => i.uid));
+  picked = new Set([...picked].filter(u => known.has(u)));
+  $("#pickList").innerHTML = KIND_ORDER.slice().reverse().flatMap(k => items(k).sort((a, b) => a.name.localeCompare(b.name))).map(i =>
+    `<label class="pick"><input type="checkbox" data-u="${i.uid}" ${picked.has(i.uid) ? "checked" : ""}><span>${esc(i.name)}</span><span class="meta">${KIND_LABEL[i.kind]}</span></label>`).join("")
+    || `<div class="empty-note">Nothing saved yet.</div>`;
+  renderExPreview();
+}
+function chosen() { return store.items.filter(i => picked.has(i.uid)); }
+function renderExPreview() {
+  const sel = chosen();
+  $("#exPreview").innerHTML = sel.length ? highlight(emitAll(sel)) : "Tick something on the left.";
+  $("#dlBtn").disabled = $("#copyBtn").disabled = $("#shareBtn").disabled = !sel.length;
+  const bad = sel.filter(i => check(i, store.items).err.length);
+  $("#exIssues").innerHTML = bad.length ? `<div class="err">${bad.length} picked item${bad.length > 1 ? "s" : ""} would be refused by the Studio: ${bad.slice(0, 4).map(b => esc(b.name || "(unnamed)")).join(", ")}${bad.length > 4 ? "..." : ""}. Fix ${bad.length > 1 ? "them" : "it"} on the Make tab first.</div>` : sel.length ? `<div class="ok">${sel.length} item${sel.length > 1 ? "s" : ""} ready.</div>` : "";
+}
+$("#pickList").addEventListener("change", e => { const u = e.target.dataset.u; if (!u) return; e.target.checked ? picked.add(u) : picked.delete(u); renderExPreview(); });
+$("#pickAll").onclick = () => { picked = new Set(store.items.map(i => i.uid)); renderExport(); };
+$("#pickNone").onclick = () => { picked.clear(); renderExport(); };
+function download(name, text) {
+  const url = URL.createObjectURL(new Blob([text], {type: "text/plain;charset=utf-8"}));
+  const a = Object.assign(document.createElement("a"), {href: url, download: name}); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+const exportName = sel => sel.length === 1 ? (sel[0].name.replace(/[\\/:*?"<>|#^\[\]]/g, "").trim() || sel[0].kind) : "2gg-" + new Date().toISOString().slice(0, 10);
+$("#dlBtn").onclick = () => {
+  const sel = chosen(); if (!sel.length) return;
+  const name = exportName(sel);
+  download(name + ".2gg", emitAll(sel)); toast(`Downloaded <b>${esc(name)}.2gg</b>.`);
+};
+/* the phone's own share sheet (Messages, Discord, mail...), where the browser has one */
+const canShare = () => !!navigator.share;
+$("#shareBtn").hidden = !canShare();
+$("#shareBtn").onclick = async () => {
+  const sel = chosen(); if (!sel.length) return;
+  const name = exportName(sel) + ".2gg", text = emitAll(sel);
+  try {
+    const file = new File([text], name, {type: "text/plain"});
+    if (navigator.canShare && navigator.canShare({files: [file]})) await navigator.share({files: [file], title: name});
+    else await navigator.share({title: name, text});
+  } catch (e) { if (e && e.name !== "AbortError") toast("Sharing did not work here. Use Download or Copy instead.", true); }
+};
+async function copyText(t) {
+  if (!t) return;
+  try { await navigator.clipboard.writeText(t); toast("Copied."); }
+  catch { const ta = Object.assign(document.createElement("textarea"), {value: t}); document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); toast("Copied."); } catch { toast("Could not copy. Select the text and copy it by hand.", true); } ta.remove(); }
+}
+$("#copyBtn").onclick = () => copyText(emitAll(chosen()));
+
+function importText(text, label, opts = {}) {
+  const keepMine = opts.demo || prefs.conflict === "skip";
+  const {items: got, errors, skipped} = parseMarkup(text);
+  if (!got.length) { toast(errors.length ? esc(`${label}: ${errors[0].message}`) : `${esc(label)}: no items found. Items start with a line like <b>@challenge My challenge</b>.`, true); return 0; }
+  let added = 0, replaced = 0, kept = 0;
+  for (const g of got) {
+    const ex = store.items.find(i => i.kind === g.kind && ckey(i.name) === ckey(g.name));
+    const rec = {kind: g.kind, name: g.name, fields: g.fields, body: g.body, updated: Date.now()};
+    if (ex && keepMine) kept++;
+    else if (ex) { Object.assign(ex, rec); delete ex.demo; replaced++; }
+    else { store.items.push({uid: uid(), ...rec, ...(opts.demo ? {demo: true} : {})}); added++; }
+  }
+  persist(); renderList(); renderExport(); renderTreeIfVisible(); renderSettings();
+  const extra = [errors.length && `${errors.length} line${errors.length > 1 ? "s" : ""} skipped with problems`, skipped && `${skipped} friend/chievo/config item${skipped > 1 ? "s" : ""} not supported here`].filter(Boolean);
+  toast(`Imported <b>${added + replaced}</b> from ${esc(label)} (${added} new, ${replaced} replaced${kept ? `, ${kept} kept as yours` : ""}).${extra.length ? "<br><small>" + extra.join("; ") + "</small>" : ""}`);
+  return added + replaced;
+}
+async function importFiles(files) { for (const f of files) importText(await f.text(), f.name); }
+$("#pickFile").onclick = () => $("#fileIn").click();
+$("#fileIn").onchange = e => { importFiles([...e.target.files]); e.target.value = ""; };
+$("#pasteBtn").onclick = () => { if (importText($("#pasteIn").value, "pasted text")) $("#pasteIn").value = ""; };
+const drop = $("#drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => importFiles([...e.dataTransfer.files]));
+
+/* ============ settings ============ */
+function afterDataChange() {
+  persist();
+  if (curUid && !store.items.some(i => i.uid === curUid)) { curUid = null; cur = blank(prefs.defaultKind); dirty = false; syncAll(); }
+  else { renderList(); renderMeta(); }
+  renderExport(); renderTreeIfVisible(); renderSettings();
+}
+function removeWhere(pred, what) {
+  const gone = store.items.filter(pred);
+  if (!gone.length) return toast("Nothing to delete.");
+  if (!confirm(`Delete ${gone.length} ${what}? This cannot be undone. Export or download a backup first if you might want them back.`)) return;
+  store.items = store.items.filter(i => !pred(i)); buzz([10, 40, 10]); afterDataChange();
+  toast(`Deleted <b>${gone.length}</b> ${esc(what)}.`);
+}
+const bytes = n => n < 1024 ? n + " B" : n < 1048576 ? (n / 1024).toFixed(1) + " KB" : (n / 1048576).toFixed(2) + " MB";
+function renderSettings() {
+  const json = JSON.stringify(store), used = new Blob([json]).size, quota = 5 * 1048576;
+  const demo = store.items.filter(i => i.demo).length, bad = store.items.filter(i => check(i, store.items).err.length).length;
+  $("#storeInfo").innerHTML = KIND_ORDER.slice().reverse().map(k => `<div class="stat"><span>${PL(k)}</span><span>${items(k).length}</span></div>`).join("") +
+    `<div class="stat"><span><b>Total</b></span><span>${store.items.length}</span></div>` +
+    `<div class="meter"><i style="width:${Math.min(100, used / quota * 100).toFixed(1)}%"></i></div><div class="hint">${bytes(used)} of roughly 5 MB the browser allows for this page.${memoryOnly ? " Storage is blocked here, so this is only held while the tab is open." : ""}</div>`;
+  $("#demoInfo").textContent = demo ? `${demo} example item${demo > 1 ? "s" : ""} in your save. Edited ones count as yours.` : "None loaded.";
+  $("#demoClear").disabled = !demo;
+  $("#badInfo").textContent = bad ? `${bad} item${bad > 1 ? "s" : ""} the Studio would refuse.` : "None. Everything saved passes the checks.";
+  $("#badClear").disabled = !bad;
+  $("#kindClear").innerHTML = KIND_ORDER.slice().reverse().map(k => `<div class="setrow"><span>${PL(k)} <span class="hint" style="display:inline">(${items(k).length})</span></span><button class="ghost small danger" type="button" data-clear-kind="${k}" ${items(k).length ? "" : "disabled"}>Delete</button></div>`).join("");
+  $("#clearBtn").disabled = !store.items.length;
+  $$("#setTheme button").forEach(b => b.classList.toggle("on", b.dataset.v === prefs.theme));
+  $$("#setKind button").forEach(b => b.classList.toggle("on", b.dataset.v === prefs.defaultKind));
+  $$("#setConflict button").forEach(b => b.classList.toggle("on", b.dataset.v === prefs.conflict));
+  $$("[data-pref]").forEach(c => c.checked = !!prefs[c.dataset.pref]);
+  $("#aboutV").textContent = VERSION;
+}
+$("#setKind").innerHTML = Object.keys(FORM).map(k => `<button type="button" data-v="${k}">${KIND_LABEL[k]}</button>`).join("");
+$("#hapticRow").hidden = !navigator.vibrate;
+for (const [id, key] of [["#setTheme", "theme"], ["#setKind", "defaultKind"], ["#setConflict", "conflict"]])
+  $(id).addEventListener("click", e => { const b = e.target.closest("button[data-v]"); if (!b) return; prefs[key] = b.dataset.v; savePrefs(); applyTheme(); renderSettings(); });
+$("#viewSettings").addEventListener("change", e => {
+  const c = e.target.closest("[data-pref]"); if (!c) return;
+  prefs[c.dataset.pref] = c.checked; savePrefs(); if (c.dataset.pref === "showTasks") $("#showTasks").checked = c.checked;
+});
+$("#resetPrefs").onclick = () => { prefs = {...PREF_DEFAULTS}; savePrefs(); applyTheme(); $("#showTasks").checked = prefs.showTasks; renderSettings(); toast("Preferences reset."); };
+$("#demoLoad").onclick = loadDemo;
+$("#demoClear").onclick = () => removeWhere(i => i.demo, "example items");
+$("#badClear").onclick = () => removeWhere(i => check(i, store.items).err.length, "items that need fixing");
+$("#kindClear").addEventListener("click", e => { const b = e.target.closest("[data-clear-kind]"); if (b) removeWhere(i => i.kind === b.dataset.clearKind, PL(b.dataset.clearKind).toLowerCase()); });
+$("#clearBtn").onclick = () => removeWhere(() => true, "saved items");
+$("#factoryBtn").onclick = () => {
+  if (!confirm("Delete every saved item and reset all preferences?")) return;
+  store.items = []; prefs = {...PREF_DEFAULTS};
+  try { localStorage.removeItem(KEY); localStorage.removeItem(PREF_KEY); localStorage.removeItem("2gg-maker-theme"); } catch {}
+  applyTheme(); $("#showTasks").checked = prefs.showTasks; afterDataChange(); toast("Everything was reset.");
+};
+$("#bkDownload").onclick = () => {
+  download(`2gg-create-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({app: "2gg-maker", version: 1, exported: new Date().toISOString(), prefs, items: store.items}, null, 2));
+  toast("Backup downloaded.");
+};
+$("#bkRestore").onclick = () => $("#bkFile").click();
+$("#bkFile").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || (d.app !== "2gg-maker" && d.app !== "2gg-create") || !Array.isArray(d.items)) throw new Error("not a backup");
+    let added = 0, replaced = 0;
+    for (const raw of d.items) {
+      if (!raw || !SPEC[raw.kind] || typeof raw.name !== "string" || typeof raw.fields !== "object" || !raw.fields) continue;
+      const rec = {uid: String(raw.uid || uid()), kind: raw.kind, name: raw.name, fields: raw.fields, body: String(raw.body || ""), updated: +raw.updated || Date.now(), ...(raw.demo ? {demo: true} : {})};
+      const ex = store.items.find(i => i.uid === rec.uid);
+      if (ex) { Object.assign(ex, rec); if (!rec.demo) delete ex.demo; replaced++; } else { store.items.push(rec); added++; }
+    }
+    if (d.prefs && typeof d.prefs === "object" && confirm("Also restore the preferences from this backup?")) { prefs = {...PREF_DEFAULTS, ...d.prefs}; savePrefs(); applyTheme(); }
+    afterDataChange(); toast(`Restored <b>${added + replaced}</b> items (${added} new, ${replaced} replaced).`);
+  } catch { toast("That file is not a 2gg Create backup.", true); }
+};
+
+/* ============ demo ============ */
+function loadDemo() {
+  importText(`# 2gg markup v1
+@task Snuggle with Jay
+type: Habit
+frequency: Daily
+reward: 1
+
+@challenge It's Showtiiiime!!
+difficulty: Normal
+repeatable: no
+reward: 1
+unlocks: Sea Pony Sketch
+
+@challenge Sea Pony Sketch
+difficulty: Hard
+repeatable: no
+reward: 1
+requires: It's Showtiiiime!!
+task: Snuggle with Jay
+
+Draw Aloy for Jay.
+
+@challenge Mask Making
+difficulty: Easy
+repeatable: no
+reward: 1
+unlocks: Gifts For The Grab
+
+@challenge Gifts For The Grab
+difficulty: Intense
+repeatable: no
+reward: 2
+requires: Mask Making
+requires: Sea Pony Sketch
+`, "the example", {demo: true});
+}
+$("#loadDemo").onclick = loadDemo;
+
+/* ============ tree ============ */
+const NW = 176, NH = 44, GX = 96, GY = 22;
+let TV = {x: 40, y: 40, k: 1}, lastFit = "";
+const svgNS = "http://www.w3.org/2000/svg";
+function buildGraph(showTasks) {
+  const nodes = new Map(), edges = new Map();
+  const node = (key, o) => { if (!nodes.has(key)) nodes.set(key, {key, layer: 0, ...o}); return nodes.get(key); };
+  const edge = (a, b, type) => { if (a !== b) edges.set(a + ">" + b, {a, b, type}); };
+  const chals = items("challenge"), byName = new Map(chals.map(c => [ckey(c.name), c]));
+  const tasks = new Map(items("task").map(t => [ckey(t.name), t]));
+  const ck = name => "c:" + ckey(stripLink(name));
+  const cnode = (name) => { const r = byName.get(ckey(stripLink(name))); return node(ck(name), r ? {label: r.name, kind: "c", uid: r.uid, diff: r.fields.difficulty} : {label: stripLink(name), kind: "c", missing: true}); };
+  chals.forEach(c => cnode(c.name));
+  for (const c of chals) {
+    (c.fields.requires || []).forEach(r => { cnode(r); edge(ck(r), ck(c.name), "req"); });
+    (c.fields.unlocks || []).forEach(u => { cnode(u); edge(ck(c.name), ck(u), "req"); });
+    if (showTasks) (c.fields.task || []).forEach(t => {
+      const k = "t:" + ckey(stripLink(t)), r = tasks.get(ckey(stripLink(t)));
+      node(k, r ? {label: r.name, kind: "t", uid: r.uid} : {label: stripLink(t), kind: "t", missing: true}); edge(k, ck(c.name), "task");
+    });
+  }
+  const E = [...edges.values()], N = [...nodes.values()];
+  let cyc = false;
+  for (let pass = 0; pass <= N.length + 1; pass++) {
+    let moved = false;
+    for (const e of E) { const a = nodes.get(e.a), b = nodes.get(e.b); if (b.layer < a.layer + 1) { b.layer = a.layer + 1; moved = true; } }
+    if (!moved) break;
+    if (pass > N.length) { cyc = true; }
+  }
+  if (cyc) N.forEach(n => n.layer = Math.min(n.layer, N.length));
+  const cols = []; N.forEach(n => (cols[n.layer] = cols[n.layer] || []).push(n));
+  cols.forEach(c => c && c.sort((a, b) => a.label.localeCompare(b.label)));
+  const ins = new Map(), outs = new Map(); N.forEach(n => { ins.set(n.key, []); outs.set(n.key, []); });
+  E.forEach(e => { outs.get(e.a).push(e.b); ins.get(e.b).push(e.a); });
+  const idx = () => { const m = new Map(); cols.forEach(c => c && c.forEach((n, i) => m.set(n.key, i))); return m; };
+  for (let s = 0; s < 4; s++) {
+    for (const dir of [0, 1]) {
+      const order = dir ? cols.slice().reverse() : cols, pos = idx();
+      order.forEach(c => { if (!c) return;
+        const bc = n => { const nb = (dir ? outs : ins).get(n.key); return nb.length ? nb.reduce((t, k) => t + pos.get(k), 0) / nb.length : pos.get(n.key); };
+        const w = new Map(c.map(n => [n.key, bc(n)])); c.sort((a, b) => w.get(a.key) - w.get(b.key) || a.label.localeCompare(b.label));
+        c.forEach((n, i) => pos.set(n.key, i)); });
+    }
+  }
+  const tallest = Math.max(1, ...cols.map(c => c ? c.length : 0)), H = tallest * (NH + GY) - GY;
+  cols.forEach((c, li) => { if (!c) return; const h = c.length * (NH + GY) - GY; c.forEach((n, i) => { n.x = li * (NW + GX); n.y = (H - h) / 2 + i * (NH + GY); }); });
+  return {nodes: N, edges: E, ins, outs, w: cols.length * (NW + GX) - GX, h: H, cyc, map: nodes};
+}
+function renderTree() {
+  const g = buildGraph($("#showTasks").checked), vp = $("#treeVp");
+  const chals = g.nodes.filter(n => n.kind === "c");
+  $("#treeEmpty").hidden = !!chals.length;
+  vp.innerHTML = "";
+  if (!chals.length) { $("#treeNote").textContent = ""; return; }
+  const mk = (tag, attrs, parent) => { const el = document.createElementNS(svgNS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); (parent || vp).appendChild(el); return el; };
+  g.edges.forEach(e => {
+    const a = g.map.get(e.a), b = g.map.get(e.b), x1 = a.x + NW, y1 = a.y + NH / 2, x2 = b.x, y2 = b.y + NH / 2, dx = Math.max(30, (x2 - x1) / 2);
+    const grp = mk("g", {class: "tedge " + e.type, "data-a": e.a, "data-b": e.b});
+    mk("path", {d: `M${x1} ${y1}C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2 - 2} ${y2}`, "marker-end": "url(#arr)"}, grp);
+  });
+  g.nodes.forEach(n => {
+    const grp = mk("g", {class: "tnode" + (n.missing ? " missing" : "") + (n.kind === "t" ? " task" : ""), "data-key": n.key, transform: `translate(${n.x} ${n.y})`});
+    const col = n.kind === "t" ? "var(--muted)" : n.missing ? "var(--warn)" : diffColor(n.diff);
+    mk("rect", {width: NW, height: NH, rx: n.kind === "t" ? 22 : 9, stroke: col, fill: `color-mix(in srgb, ${col} 12%, var(--panel))`}, grp);
+    const label = n.label.length > 24 ? n.label.slice(0, 23) + "..." : n.label;
+    const t = mk("text", {x: 12, y: n.kind === "c" && !n.missing ? 19 : 26}, grp); t.textContent = label;
+    if (n.kind === "c" && !n.missing) { const s = mk("text", {x: 12, y: 34, class: "sm"}, grp); s.textContent = n.diff || ""; }
+    else { const s = mk("text", {x: NW - 10, y: 26, "text-anchor": "end", class: "sm"}, grp); s.textContent = n.missing ? "not saved" : "task"; t.setAttribute("y", 26); }
+    const title = mk("title", {}, grp); title.textContent = n.label + (n.missing ? " (not saved here; must exist in the vault)" : "");
+  });
+  const dead = g.nodes.filter(n => n.kind === "c" && !n.missing && !g.ins.get(n.key).length).length;
+  $("#treeNote").textContent = `${chals.filter(n => !n.missing).length} saved, ${dead} starting point${dead === 1 ? "" : "s"}${g.cyc ? ", loop found in the links" : ""}`;
+  const sig = g.nodes.map(n => n.key).join("|");
+  if (sig !== lastFit) { lastFit = sig; fit(g); }
+  applyView(); currentGraph = g;
+}
+let currentGraph = null;
+function fit(g) {
+  const r = $("#treeSvg").getBoundingClientRect(), gg = g || currentGraph; if (!gg || !r.width) return;
+  const k = Math.min(1.2, Math.max(.2, Math.min((r.width - 60) / Math.max(1, gg.w), (r.height - 80) / Math.max(1, gg.h))));
+  TV = {k, x: (r.width - gg.w * k) / 2, y: Math.max(20, (r.height - gg.h * k) / 2)};
+}
+function applyView() { $("#treeVp").setAttribute("transform", `translate(${TV.x} ${TV.y}) scale(${TV.k})`); }
+function zoomAt(f, cx, cy) { const k = Math.min(3, Math.max(.15, TV.k * f)); TV.x = cx - (cx - TV.x) * (k / TV.k); TV.y = cy - (cy - TV.y) * (k / TV.k); TV.k = k; applyView(); }
+$("#zIn").onclick = () => { const r = $("#treeSvg").getBoundingClientRect(); zoomAt(1.25, r.width / 2, r.height / 2); };
+$("#zOut").onclick = () => { const r = $("#treeSvg").getBoundingClientRect(); zoomAt(.8, r.width / 2, r.height / 2); };
+$("#zFit").onclick = () => { fit(); applyView(); };
+$("#showTasks").onchange = () => { lastFit = ""; renderTree(); };
+const svg = $("#treeSvg");
+svg.addEventListener("wheel", e => { e.preventDefault(); const r = svg.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.12 : .89, e.clientX - r.left, e.clientY - r.top); }, {passive: false});
+/* one finger (or mouse) pans, two fingers pinch-zoom and pan, double tap zooms in, tap a node to open it */
+const ptrs = new Map();
+let gest = null, lastTap = {t: 0, x: 0, y: 0};
+const pts = () => [...ptrs.values()];
+const mid = () => { const [a, b] = pts(); return {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, d: Math.hypot(a.x - b.x, a.y - b.y) || 1}; };
+const local = (x, y) => { const r = svg.getBoundingClientRect(); return {x: x - r.left, y: y - r.top}; };
+svg.addEventListener("pointerdown", e => {
+  ptrs.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  try { svg.setPointerCapture(e.pointerId); } catch {}
+  if (ptrs.size === 1) {
+    const n = e.target.closest(".tnode");
+    gest = {mode: "pan", x: e.clientX, y: e.clientY, tx: TV.x, ty: TV.y, moved: false, node: n ? n.dataset.key : null, t: Date.now()};
+  } else if (ptrs.size === 2) {
+    const m = mid(), l = local(m.x, m.y);
+    gest = {mode: "pinch", d: m.d, k: TV.k, wx: (l.x - TV.x) / TV.k, wy: (l.y - TV.y) / TV.k, moved: true};
+    svg.classList.add("dragging");
+  }
+});
+svg.addEventListener("pointermove", e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (!gest) return;
+  if (gest.mode === "pinch" && ptrs.size >= 2) {
+    const m = mid(), l = local(m.x, m.y), k = Math.min(3, Math.max(.15, gest.k * m.d / gest.d));
+    TV.k = k; TV.x = l.x - gest.wx * k; TV.y = l.y - gest.wy * k; applyView();
+  } else if (gest.mode === "pan" && ptrs.size === 1) {
+    const dx = e.clientX - gest.x, dy = e.clientY - gest.y;
+    if (!gest.moved && Math.hypot(dx, dy) > (e.pointerType === "touch" ? 9 : 4)) { gest.moved = true; svg.classList.add("dragging"); }
+    if (gest.moved) { TV.x = gest.tx + dx; TV.y = gest.ty + dy; applyView(); }
+  }
+});
+function endPtr(e) {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  const g = gest;
+  if (ptrs.size === 0) {
+    svg.classList.remove("dragging"); gest = null;
+    if (g && g.mode === "pan" && !g.moved && e.type === "pointerup") {
+      const now = Date.now();
+      if (now - lastTap.t < 320 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) {  // double tap
+        const l = local(e.clientX, e.clientY); zoomAt(2, l.x, l.y); lastTap.t = 0; buzz(8); return;
+      }
+      lastTap = {t: now, x: e.clientX, y: e.clientY};
+      if (g.node) nodeTap(g.node);
+      else if (!$("#sheet").hidden) closeSheet();
+    }
+  } else if (ptrs.size === 1) {  // one finger lifted mid-pinch: carry on panning with the other
+    const p = pts()[0]; gest = {mode: "pan", x: p.x, y: p.y, tx: TV.x, ty: TV.y, moved: true, node: null};
+  }
+}
+svg.addEventListener("pointerup", endPtr); svg.addEventListener("pointercancel", endPtr);
+function openNode(key) {
+  const n = currentGraph && currentGraph.map.get(key); if (!n) return;
+  closeSheet();
+  if (n.uid) { go("make"); open(store.items.find(i => i.uid === n.uid)); return; }
+  if (!confirm(`"${n.label}" is not saved here. Start a new ${n.kind === "t" ? "task" : "challenge"} with that name?`)) return;
+  go("make"); if (dirty && !confirm("Discard your unsaved changes?")) return;
+  curUid = null; cur = blank(n.kind === "t" ? "task" : "challenge"); cur.name = n.label; dirty = true; syncAll();
+}
+/* on touch a tap opens a bottom sheet first (there is no hover to preview with); with a mouse it opens the editor straight away */
+function nodeTap(key) { if (coarse()) showSheet(key); else openNode(key); }
+let sheetKey = null;
+function showSheet(key) {
+  const g = currentGraph, n = g && g.map.get(key); if (!n) return;
+  sheetKey = key; buzz(8); trace(key);
+  const names = (map, kind) => map.get(key).map(k => g.map.get(k)).filter(x => x.kind === kind).map(x => x.label);
+  const row = (label, list) => list.length ? `<div class="srow"><b>${label}</b>${list.map(esc).join(", ")}</div>` : "";
+  const sub = n.kind === "t" ? "Task" : n.missing ? "Not saved here" : `<span class="dot" style="--c:${diffColor(n.diff)}"></span>${esc(n.diff || "")}`;
+  $("#sheetBody").innerHTML = `<h3>${esc(n.label)}</h3><div class="ssub">${sub}</div>` +
+    (n.kind === "c" ? row("Needs", names(g.ins, "c")) + row("Unlocks", names(g.outs, "c")) + row("Tasks", names(g.ins, "t")) : row("Used by", names(g.outs, "c"))) +
+    (n.missing ? `<div class="hint">It must already exist in the vault, or save it here first.</div>` : "") +
+    `<div class="actions"><button class="primary" type="button" data-sh="open">${n.uid ? "Edit" : "Create it"}</button><button class="ghost" type="button" data-sh="close">Close</button></div>`;
+  $("#sheet").hidden = false;
+}
+function closeSheet() { $("#sheet").hidden = true; sheetKey = null; svg.classList.remove("tracing"); $$("#treeVp .lit").forEach(x => x.classList.remove("lit")); }
+$("#sheet").addEventListener("click", e => {
+  const b = e.target.closest("[data-sh]");
+  if (b) return b.dataset.sh === "open" ? openNode(sheetKey) : closeSheet();
+  if (e.target.id === "sheet") closeSheet();
+});
+/* drag the sheet down to dismiss it */
+(() => {
+  const box = $("#sheetBox"); let s = null;
+  box.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; s = {y: e.clientY, dy: 0}; box.setPointerCapture(e.pointerId); });
+  box.addEventListener("pointermove", e => { if (!s) return; s.dy = Math.max(0, e.clientY - s.y); box.style.transform = `translateY(${s.dy}px)`; });
+  const end = () => { if (!s) return; const far = s.dy > 90; s = null; box.style.transform = ""; if (far) { buzz(8); closeSheet(); } };
+  box.addEventListener("pointerup", end); box.addEventListener("pointercancel", end);
+})();
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+svg.addEventListener("pointerover", e => {
+  if (e.pointerType !== "mouse") return;
+  const n = e.target.closest(".tnode"); if (!n || !currentGraph) return; trace(n.dataset.key);
+});
+svg.addEventListener("pointerout", e => { if (e.pointerType === "mouse" && e.target.closest(".tnode")) { svg.classList.remove("tracing"); $$("#treeVp .lit").forEach(x => x.classList.remove("lit")); } });
+function trace(key) {
+  const g = currentGraph, lit = new Set([key]);
+  const walk = (map, k) => map.get(k).forEach(o => { if (!lit.has(o)) { lit.add(o); walk(map, o); } });
+  walk(g.ins, key); walk(g.outs, key);
+  svg.classList.add("tracing");
+  $$("#treeVp .tnode").forEach(el => el.classList.toggle("lit", lit.has(el.dataset.key)));
+  $$("#treeVp .tedge").forEach(el => el.classList.toggle("lit", lit.has(el.dataset.a) && lit.has(el.dataset.b)));
+}
+$("#legend").innerHTML = DIFFICULTIES.map(d => `<span><i class="dot" style="--c:${diffColor(d)}"></i>${d}</span>`).join("") + `<span><i class="dot" style="--c:var(--warn)"></i>not saved here</span>`;
+const renderTreeIfVisible = () => { if (view === "tree") renderTree(); };
+
+/* ============ views, theme ============ */
+let view = "make";
+const VIEWS = ["make", "tree", "export", "settings"];
+function go(v) {
+  view = v; closeSheet();
+  for (const id of VIEWS) $("#view" + id[0].toUpperCase() + id.slice(1)).hidden = id !== v;
+  if (v === "settings") renderSettings();
+  $$("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
+  if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+  if (v === "tree") { lastFit = ""; requestAnimationFrame(renderTree); }
+  if (v === "export") renderExport();
+}
+$("#tabs").addEventListener("click", e => { const a = e.target.closest("a[data-view]"); if (a) { e.preventDefault(); go(a.dataset.view); } });
+/* swipe sideways on the page to move between tabs (not on the tree, text fields or scrolling lists) */
+(() => {
+  let s = null;
+  document.addEventListener("touchstart", e => {
+    s = null; if (e.touches.length !== 1 || !coarse() || view === "tree" || !$("#sheet").hidden) return;
+    if (e.target.closest("input, textarea, select, pre, .picklist, .sitem, .seg, .stepper, .drop textarea")) return;
+    s = {x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now()};
+  }, {passive: true});
+  document.addEventListener("touchend", e => {
+    if (!s) return; const t = e.changedTouches[0], dx = t.clientX - s.x, dy = t.clientY - s.y, quick = Date.now() - s.t < 600; s = null;
+    if (!quick || Math.abs(dx) < 90 || Math.abs(dy) > Math.abs(dx) * .5) return;
+    const i = VIEWS.indexOf(view) + (dx < 0 ? 1 : -1);
+    if (i >= 0 && i < VIEWS.length) { buzz(8); go(VIEWS[i]); scrollTo(0, 0); }
+  }, {passive: true});
+})();
+window.addEventListener("resize", () => { if (view === "tree") { fit(); applyView(); } });
+$("#themeBtn").onclick = () => {
+  const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  prefs.theme = dark ? "light" : "dark"; savePrefs(); applyTheme(); if (view === "settings") renderSettings();
+};
+
+loadPrefs(); applyTheme();
+loadStore();
+$("#noStore").hidden = !memoryOnly;
+$("#showTasks").checked = prefs.showTasks;
+cur = blank(prefs.defaultKind);
+syncAll(); renderExport(); renderSettings();
+go(VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "make");
+</script>
+</body>
+</html>
